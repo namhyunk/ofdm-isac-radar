@@ -57,7 +57,23 @@ Without clutter removal, CFAR only finds the three static clutter peaks and miss
 predicts a target-center heatmap on the RD map, trained with a CenterNet-style focal loss on randomly
 generated scenes (1–4 targets, 0–3 clutter returns, −25 to −5 dB SNR).
 
-RESULTS_TABLE
+Test set: 100 random frames per SNR point (2000 training frames, 10 epochs, ~3 min on a 2-core CPU).
+A detection counts as a hit within ±2 range cells and ±1 Doppler cell of the true target.
+
+| SNR [dB] | CA-CFAR Pd | CA-CFAR FA/frame | CNN Pd | CNN FA/frame |
+|---:|---:|---:|---:|---:|
+| −30 | 0.32 | 0.00 | **0.72** | 0.04 |
+| −27 | 0.76 | 0.00 | **0.93** | 0.03 |
+| −24 | 0.94 | 0.00 | 0.96 | 0.02 |
+| −18 | 0.97 | 0.00 | 1.00 | 0.00 |
+| −12 | 0.97 | 0.00 | 1.00 | 0.00 |
+| −6  | 0.97 | 0.00 | 0.99 | 0.04 |
+
+The CNN gains most at low SNR and also resolves targets that sit close together in the RD map,
+where CFAR plus local-max clustering merges them (CFAR's plateau below 1.0 at high SNR). The two
+detectors are not at an identical false-alarm rate here (CFAR at Pfa = 1e-4 produced no false
+alarms on this test set, the CNN a few per hundred frames), so a fair next step is a full ROC sweep
+over the CFAR Pfa and the CNN threshold.
 
 ![CNN vs CFAR](figures/cnn_vs_cfar.png)
 
